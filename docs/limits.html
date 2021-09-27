@@ -75,9 +75,13 @@
       </div>
       <div class="col-md-12">
         <p>
-          The left figure below shows the new regret defined as above for different sizes of $\mathcal{G}$, applying Alg-PC to the 2nd example in paper.
-          In the right figure we show the experimentally observed capture rate, together with $\tilde{Q}_*$ (dashed lines) for different sizes of $\mathcal{G}$.
-          We can observe that $\tilde{Q}_*$ becomes closer to the true optimal (red horizontal line) as $\mathcal{G}$ becomes finer.
+          The first (left) figure below shows the new regret defined as above for different sizes of $\mathcal{G}$, applying Alg-PC to the 2nd example in paper.
+          It illustrates that finer $\mathcal{G}$ requires more episodes to approach the asymptotic learnable limit.  
+          But even though the $20 \times 20$ $\mathcal{G}$ results in a higher grid-adjusted regret than the $10 \times 10$ grid, this is is not the case 
+          for the regret-against-the-truly-optimal-$Q_*$, as defined in the paper and illustrated in the second (center) figure below.
+          The third (right) figure illustrates the experimentally observed capture rate, together with $\tilde{Q}_*$ (dashed lines) for different sizes of $\mathcal{G}$.
+          We observe that $\tilde{Q}_*$ becomes closer to the true optimal (red horizontal line) as $\mathcal{G}$ becomes finer, 
+          but it takes more than $40,000$ episodes until the asymptotic advantage of the $20 \times 20$ grid yields a lower capture rate than the $10 \times 10$.
         </p>
       </div>
       <div class="col-md-12">
