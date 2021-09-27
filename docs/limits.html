@@ -47,7 +47,7 @@
     <!-- Begin page content -->
     <main role="main" class="container">
 
-      <section class="jumbotron text-left">
+      <section class="jumbotron text-center">
         <div class="container">
           <h1 class="jumbotron-heading">Learnable Limits of Algorithms</h1>
         </div>
@@ -55,14 +55,14 @@
       <p align="justify">
         Our use of the discrete observational grid $\mathcal{G}$ essentially lumps together all captures within one cell
         (see <a href="">paper</a> for more details).
-        This limits the algorithm's ability to learn the true $K.$ 
-        To account for this more accurately, we can modify our definition of regret metric (formula (6) in the paper) and measure the regret relative 
-        to the best path learnable on the specific $\mathcal{G}$.  Below we provide additional tests illustrating this idea for ALg-PC and data showing 
-        that this subtlety is laregly irrelevant for Alg-GP. 
+        This limits the algorithm's ability to learn the true $K.$
+        To account for this more accurately, we can modify our definition of regret metric (formula (6) in the paper) and measure the regret relative
+        to the best path learnable on the specific $\mathcal{G}$.  Below we provide additional tests illustrating this idea for Alg-PC and data showing
+        that this subtlety is laregly irrelevant for Alg-GP.
       <br>
 
       <h2>Alg-PC (piecewise constant model) </h2>
-      <div class="col-md-12">
+      <div class="col-sm-12">
         <p>
           We define $\tilde{K}_*(\mathbf{x})$ to be the cell-averaged version of $K.$
           This piecewise-constant function also represents the best approximation of $K$
@@ -74,26 +74,26 @@
           we can define the $\mathcal{G}$-adjusted regret by using $\tilde{Q}_*$ instead.
         </p>
       </div>
-      <div class="col-md-12">
+      <div class="col-sm-12">
         <p>
           The first (left) figure below shows the new regret defined as above for different sizes of $\mathcal{G}$, applying Alg-PC to the 2nd example in paper.
-          It illustrates that finer $\mathcal{G}$ requires more episodes to approach the asymptotic learnable limit.  
-          But even though the $20 \times 20$ $\mathcal{G}$ results in a higher grid-adjusted regret than the $10 \times 10$ grid, this is is not the case 
+          It illustrates that finer $\mathcal{G}$ requires more episodes to approach the asymptotic learnable limit.
+          But even though the $20 \times 20$ $\mathcal{G}$ results in a higher grid-adjusted regret than the $10 \times 10$ grid, this is is not the case
           for the regret-against-the-truly-optimal-$Q_*$, as defined in the paper and illustrated in the second (center) figure below.
           The third (right) figure illustrates the experimentally observed capture rate, together with $\tilde{Q}_*$ (dashed lines) for different sizes of $\mathcal{G}$.
-          We observe that $\tilde{Q}_*$ becomes closer to the true optimal $Q_*$ (the red horizontal line) as $\mathcal{G}$ becomes finer. 
+          We observe that $\tilde{Q}_*$ becomes closer to the true optimal $Q_*$ (the red horizontal line) as $\mathcal{G}$ becomes finer.
           But it takes more than $40,000$ episodes until the asymptotic advantage of the $20 \times 20$ grid yields a lower capture rate than on the $10 \times 10$.
         </p>
       </div>
       <div class="col-md-12">
-          <img src="average_regret_best_learnable.png" width="1100" height="450">
+          <img src="average_regret_best_learnable.png" width="1100" height="380">
       </div>
 
       <h2>Alg-GP (Gaussian process model) </h2>
-      <div class="col-md-12">
+      <div class="col-sm-12">
         <p>
           Gaussian process regression performs surprisingly well in recovering the optimal path, even on a coarse grid.
-          For all the examples considered, $\tilde{Q}_*$ is already within 0.25% from the truly optimal $Q_∗$ even with a coarse 10 × 10 observation grid.
+          For all examples considered in the paper, $\tilde{Q}_*$ is already within 0.25% from the truly optimal $Q_∗$ even with a coarse 10 × 10 observation grid.
         </p>
         <p>
           The following is an illustration of this phenomenon using the 2nd & 3rd example in the paper.
