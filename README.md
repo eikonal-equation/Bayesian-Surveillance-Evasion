@@ -18,10 +18,10 @@ In addition to the manuscript, more information about the project can also be fo
 --------------------------------------------
 # Contributions / Acknowledgements
 
-* Dongping Qi has been responsible for a large part of the implementation of both algorithms and testing of the method, with guidance from Alexander Vladimirsky and David Bindel. 
+* Dongping Qi has been responsible for the implementation and testing of both algorithms, with guidance from Alexander Vladimirsky and David Bindel. 
 * Dongping Qi and Alexander Vladimirsky were mainly responsible for writing the manuscript, with help of editing from David Bindel.  
 * Alexander Vladimirsky supervised the overall project, formulated the problem and contributed several algorithmic ideas. 
-* The problem setting is inspired by the work of modelling environmental crimes by Elliot Cartee and Alexander Vladimirsky [further reading](https://epubs.siam.org/doi/abs/10.1137/19M1270483).
+* The problem setting is inspired by the work of modelling environmental crimes by Elliot Cartee and Alexander Vladimirsky ([further reading](https://epubs.siam.org/doi/abs/10.1137/19M1270483)).
 * David Bindel proposed the idea of applying Gaussian process regression. which can take advantage of the spatial correlations in the intensity function. 
 * The authors are also grateful to M. Wegkamp and M. Nussbaum for providing advice on handling the right-censored data.
 
@@ -51,9 +51,9 @@ The examples in the manuscript/website can be reproduced by just running:
 
 You can change the following parameters:
 * `episodes`;
-* `kn`:                the number of cells in each direction;
+* `kn`:             the number of cells in each direction;
 * `gamma`:          the confidence level;
-* `nobs`:            the number of observers, corresponding to difference examples;
+* `nobs`:           the number of observers, corresponding to difference examples;
 
 
 ## Visualizing output
