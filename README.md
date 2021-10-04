@@ -54,7 +54,7 @@ You can change the following parameters:
 * `episodes`;
 * `kn`:             the number of cells in each direction;
 * `gamma`:          the confidence level;
-* `nobs`:           the number of observers, corresponding to difference examples;
+* `nobs`:           the number of observers, corresponding to different examples;
 
 
 ## Visualizing output
