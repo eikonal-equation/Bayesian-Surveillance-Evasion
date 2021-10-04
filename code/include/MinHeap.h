@@ -29,8 +29,6 @@ struct MinHeap
 // A utility function to create a new MinHeap Node
 struct MinHeapNode* newMinHeapNode(int node, double value)
 {
-    // struct MinHeapNode* minHeapNode =
-    //        (struct MinHeapNode*) malloc(sizeof(struct MinHeapNode));
     MinHeapNode* minHeapNode = new MinHeapNode;
     minHeapNode->node = node;
     minHeapNode->value = value;
@@ -40,15 +38,10 @@ struct MinHeapNode* newMinHeapNode(int node, double value)
 // A utility function to create a MinHeap
 struct MinHeap* createMinHeap(int capacity)
 {
-    // struct MinHeap* minHeap =
-    //      (struct MinHeap*) malloc(sizeof(struct MinHeap));
     MinHeap* minHeap = new MinHeap;
-    // minHeap->pos = (int *)malloc(capacity * sizeof(int));
     minHeap->pos = new int [capacity];
     minHeap->hsize = 0;
     minHeap->capacity = capacity;
-    // minHeap->array =
-    //      (struct MinHeapNode**) malloc(capacity * sizeof(struct MinHeapNode*));
     minHeap->array = new MinHeapNode* [capacity];
     return minHeap;
 }

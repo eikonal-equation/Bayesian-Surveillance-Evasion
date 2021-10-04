@@ -55,7 +55,7 @@ xcaught = zeros(episode,1);  ycaught = zeros(episode,1);
 %% main learning loop, an optimal path is found by FMM in each episode
 for m = 1:episode
     % planning based on ucb modified K
-    [~,path_x,path_y] = fastMarching(n+2,x0,y0,ucb_K);
+    [~,path_x,path_y] = fastMarching(n,x0,y0,ucb_K);
   
     % integrate K along currently used path
     int_K(m) = integrated_K(path_x,path_y,real_cost,tau);
@@ -80,9 +80,9 @@ end
 
 %% learning results
 K_zero_ucb = ucb_update_pwc_K(n,h,kn,kh,K_var,K_est,ucb_K,0.0,K_min);
-[u_zero_ucb,path_x_zero_ucb,path_y_zero_ucb] = fastMarching(n+2,x0,y0,K_zero_ucb);
-[u_ucb,path_x_ucb,path_y_ucb] = fastMarching(n+2,x0,y0,ucb_K);
-[u_free,path_x_free,path_y_free] = fastMarching(n+2,x0,y0,real_cost(X,Y));
+[u_zero_ucb,path_x_zero_ucb,path_y_zero_ucb] = fastMarching(n,x0,y0,K_zero_ucb);
+[u_ucb,path_x_ucb,path_y_ucb] = fastMarching(n,x0,y0,ucb_K);
+[u_free,path_x_free,path_y_free] = fastMarching(n,x0,y0,real_cost(X,Y));
 
 
 %% plottings

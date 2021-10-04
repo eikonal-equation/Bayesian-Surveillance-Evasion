@@ -6,7 +6,7 @@ using namespace std;
 void mexFunction(int nlhs, mxArray *plhs[], int nrhs, const mxArray *prhs[])
 {
     // output pointers
-    double *U_int;
+    double *U;
     double *path_x;  double *path_y;
 
     int N;
@@ -23,14 +23,14 @@ void mexFunction(int nlhs, mxArray *plhs[], int nrhs, const mxArray *prhs[])
     }
 
     // create output matrix
-    plhs[0] = mxCreateDoubleMatrix(N-2, N-2, mxREAL);
+    plhs[0] = mxCreateDoubleMatrix(N, N, mxREAL);
 
     // get a pointer to the output data
-    U_int = mxGetPr(plhs[0]);
+    U = mxGetPr(plhs[0]);
 
     // create vectors for path coordinates
     vector<double> pathX;  vector<double> pathY;
-    fastMarching(N, x0, y0, K, U_int, pathX, pathY);
+    fastMarching(N, x0, y0, K, U, pathX, pathY);
 
     plhs[1] = mxCreateDoubleMatrix(1, pathX.size(), mxREAL);
     plhs[2] = mxCreateDoubleMatrix(1, pathY.size(), mxREAL);

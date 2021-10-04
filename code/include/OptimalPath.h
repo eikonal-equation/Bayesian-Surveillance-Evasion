@@ -12,7 +12,7 @@
 using namespace std;
 
 //::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
-void optimalNode(int N, double h, vector<double> &current, double *U_int, double tau)
+void optimalNode(int N, double h, vector<double> &current, double *U, double tau)
 {
     // number of directions
     int W = 100;
@@ -28,7 +28,7 @@ void optimalNode(int N, double h, vector<double> &current, double *U_int, double
     // if (x_tau,y_tau) belongs to a cell, then the lower left node has index: Nx*N + Ny+1
     int Nx, Ny;
     double x_min, y_min, x_res, y_res;
-    
+
     double min_U = DBL_MAX;
     double uSW, uNW, uNE, uSE, bl_U;
 
@@ -40,10 +40,10 @@ void optimalNode(int N, double h, vector<double> &current, double *U_int, double
         Nx = x_tau/h;  Ny = y_tau/h;
         x_res = x_tau - (double)Nx*h;
         y_res = y_tau - (double)Ny*h;
-        
-        uSW = U_int[Nx*N+Ny];        uNW = U_int[Nx*N+Ny+1];
-        uSE = U_int[(Nx+1)*N+Ny];    uNE = U_int[(Nx+1)*N+Ny+1];
-        
+
+        uSW = U[Nx*N+Ny];        uNW = U[Nx*N+Ny+1];
+        uSE = U[(Nx+1)*N+Ny];    uNE = U[(Nx+1)*N+Ny+1];
+
         bl_U = (1 - y_res/h)*((1 - x_res/h)*uSW + (x_res/h)*uSE) + (y_res/h)*((1 - x_res/h)*uNW + (x_res/h)*uNE);
         if(bl_U < min_U)
         {
@@ -56,19 +56,19 @@ void optimalNode(int N, double h, vector<double> &current, double *U_int, double
     current[1] = y_min;
 }
 //::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
-void optimalPath(int N, double h, double *U_int, double x0, double y0, vector<double> &pathX, vector<double> &pathY)
+void optimalPath(int N, double h, double *U, double x0, double y0, vector<double> &pathX, vector<double> &pathY)
 {
     pathX.push_back(x0);  pathY.push_back(y0);
     vector<double> current{x0, y0};
-    
+
     double tau = 0.1*h;  int count = 0;
     // domain: [0,1] x [0,1]; stop if within the thin "strip" at boundary
     while(current[0] > tau && current[0] < 1-tau && current[1] > tau && current[1] < 1-tau && count < 5/tau)
     {
-        optimalNode(N, h, current, U_int, tau);
+        optimalNode(N, h, current, U, tau);
         pathX.push_back(current[0]);
         pathY.push_back(current[1]);
-    
+
         count = count + 1;
     }
 }

@@ -18,11 +18,10 @@
 using namespace std;
 
 //::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
-void fastMarching(int N, double x0, double y0, double *K, double *U_int, vector<double> &pathX, vector<double> &pathY)
+void fastMarching(int N, double x0, double y0, double *K, double *U, vector<double> &pathX, vector<double> &pathY)
 {
-    double h = 1/((double)N - 3);
+    double h = 1/((double)N - 1);
     int n = N*N;
-    double *U = new double [n];
 
     // Generate the speed function on each node ------------------------------------
     double *F = new double [n];
@@ -40,43 +39,32 @@ void fastMarching(int N, double x0, double y0, double *K, double *U_int, vector<
 
     // MAIN LOOP -------------------------------------------------------------
     int minnode;
-    while(!isEmpty(minHeap)){
+    while (!isEmpty(minHeap)) {
         // Step one: Extract the root node of the heap and set its status as Accept
         struct MinHeapNode* minNode = extractMin(minHeap);
         minnode = minNode->node;
         status[minnode] = 2;
 
-        int i;
+        int i = minnode / N;  int j = minnode - i * N;
         // Step two: Re-evaluate the neighbors of the minnode
-        if (status[minnode+1] != 2) {
-            i = (minnode+1)/N;
-            reEvaluateNeighbor(minnode+1, N, h, U, status, minHeap, F[minnode+1]/K[minnode+1-2*i-N+1]);
+        //     Warn: Make sure node is INSIDE domain
+        if (j < N - 1) {
+            reEvaluateNeighbor(minnode+1, N, h, U, status, minHeap, F[minnode+1]/K[minnode+1]);
         }
-        if (status[minnode-1] != 2) {
-            i = (minnode-1)/N;
-            reEvaluateNeighbor(minnode-1, N, h, U, status, minHeap, F[minnode-1]/K[minnode-1-2*i-N+1]);
+        if (j > 0) {
+            reEvaluateNeighbor(minnode-1, N, h, U, status, minHeap, F[minnode-1]/K[minnode-1]);
         }
-        if (status[minnode-N] != 2) {
-            i = (minnode-N)/N;
-            reEvaluateNeighbor(minnode-N, N, h, U, status, minHeap, F[minnode-N]/K[minnode-N-2*i-N+1]);
+        if (i > 0) {
+            reEvaluateNeighbor(minnode-N, N, h, U, status, minHeap, F[minnode-N]/K[minnode-N]);
         }
-        if (status[minnode+N] != 2) {
-            i = (minnode+N)/N;
-            reEvaluateNeighbor(minnode+N, N, h, U, status, minHeap, F[minnode+N]/K[minnode+N-2*i-N+1]);
+        if (i < N - 1) {
+            reEvaluateNeighbor(minnode+N, N, h, U, status, minHeap, F[minnode+N]/K[minnode+N]);
         }
     }// End of while
-    
-    //
-    for(int i = 0; i < N-2; i++){
-        for(int j = 0; j < N-2; j++){
-            U_int[j*(N-2)+i] = U[(j+1)*N+(i+1)];
-        }
-    }
 
-    optimalPath(N-2, h, U_int, x0, y0, pathX, pathY);
+    optimalPath(N, h, U, x0, y0, pathX, pathY);
 
-    // Free all the heap allocations 
-    delete [] U;
+    // Free all the heap allocations
     delete [] F;
     delete [] status;
     deleteHeap(minHeap);

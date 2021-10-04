@@ -65,7 +65,7 @@ for m = 1:episode
     ucb_K = exp(mean_prd - ucb_factor*stds_prd);
     
     % planning based on ucb modified K
-    [u,path_x,path_y] = fastMarching(n+2,x0,y0,ucb_K);
+    [u,path_x,path_y] = fastMarching(n,x0,y0,ucb_K);
     
     % integrate K along currently used path
     int_K(m) = integrated_K(path_x,path_y,real_cost,tau);
@@ -114,9 +114,9 @@ end
 
 %% learning results: 3 difference paths
 mean_prd_zero_ucb = exp(mean_prd);
-[u_zero_ucb,path_x_zero_ucb,path_y_zero_ucb] = fastMarching(n+2,x0,y0,mean_prd_zero_ucb);
-[u_ucb,path_x_ucb,path_y_ucb] = fastMarching(n+2,x0,y0,ucb_K);
-[u_free,path_x_free,path_y_free] = fastMarching(n+2,x0,y0,real_cost(X,Y));
+[u_zero_ucb,path_x_zero_ucb,path_y_zero_ucb] = fastMarching(n,x0,y0,mean_prd_zero_ucb);
+[u_ucb,path_x_ucb,path_y_ucb] = fastMarching(n,x0,y0,ucb_K);
+[u_free,path_x_free,path_y_free] = fastMarching(n,x0,y0,real_cost(X,Y));
 
 
 %% plottings 
