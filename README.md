@@ -35,6 +35,7 @@ Currently the C++ code is complied and linked to MATLAB through a `mex` function
 The `mex` function helps compile the C++ code, so that MATLAB can directly call a C++ function, just like a MATLAB function.
 
 To make sure `mex` is properly setup on your computer, run `mex -setup C++` in MATLAB. 
+To test whether FMM solver works successfully, run `fmm_test.m` file in MATLAB.
 To change the default compiler, see [here](https://www.mathworks.com/help/matlab/matlab_external/changing-default-compiler.html). 
 For further information about `mex` functions, see [here](https://www.mathworks.com/help/matlab/ref/mex.html).
 
