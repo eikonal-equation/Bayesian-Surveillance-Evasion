@@ -7,7 +7,7 @@ You should have received a copy of the GNU General Public License along with thi
 --------------------------------------------
 # Manuscript
 
-The primary purpose in distributing this source code is to enable readers to reproduce the numerical results reported in the manuscript "Surveillance Evasion Through Bayesian Reinforcement Learning" by Dongping Qi, David Bindel, and Alexander Vladimirsky. A pre-print of this article can be found on Arxiv [here]( ). 
+The primary purpose in distributing this source code is to enable readers to reproduce the numerical results reported in the manuscript "Surveillance Evasion Through Bayesian Reinforcement Learning" by Dongping Qi, David Bindel, and Alexander Vladimirsky. A pre-print of this article can be found on Arxiv [here](https://arxiv.org/abs/2109.14811). 
 
 --------------------------------------------
 # Website
