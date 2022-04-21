@@ -1,7 +1,7 @@
 mex fastMarching.cpp
 
 %% parameters
-episode = 15000;
+episode = 50;
 kn = 20;  gamma = 0.01;
 ucb_factor = sqrt(log(episode*kn^2/gamma));
 nobs = 4;
@@ -36,7 +36,7 @@ agrid = zeros(kn,kn);
 tau = 0.1*h;
 
 % minimum integrated K along optimal path
-opt_int_K = accurate_optimal_integrated_K(real_cost,x0,y0);
+opt_int_K = optimal_integrated_K(real_cost,x0,y0);
 
 
 %% gaussian process parameters
@@ -121,9 +121,11 @@ mean_prd_zero_ucb = exp(mean_prd);
 
 %% plottings 
 figure
+set(gcf, 'Position', get(0, 'Screensize'));
 subplot(2,4,1)
 hold on
-imagesc(x_prd_1d,x_prd_1d,real_cost(X,Y))
+% imagesc(x_prd_1d,x_prd_1d,real_cost(X,Y))
+imagesc(x_prd_1d,x_prd_1d,u_free)
 line(path_x_free,path_y_free,'Linewidth',3,'Color','r','Linestyle', '-')
 scatter(x0,y0,50,'c','o','filled')
 colorbar
@@ -131,7 +133,6 @@ cllim = caxis;
 hold off
 axis image
 title('true $K$','fontsize',15,'interpreter','latex')
-
 
 subplot(2,4,2)
 hold on

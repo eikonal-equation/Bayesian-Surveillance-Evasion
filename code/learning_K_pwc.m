@@ -1,7 +1,7 @@
 mex fastMarching.cpp
 
 %% parameters
-episode = 15000;
+episode = 1000;
 kn = 20;  gamma = 0.01;
 ucb_factor = sqrt(log(episode*kn^2/gamma));
 nobs = 4;
@@ -35,7 +35,7 @@ ngrid = ones(kn,kn);
 tau = 0.1*h;
 
 % minimum integrated K along optimal path
-opt_int_K = accurate_optimal_integrated_K(real_cost,x0,y0);
+opt_int_K = optimal_integrated_K(real_cost,x0,y0);
 
 
 %% estimates & stats collectors

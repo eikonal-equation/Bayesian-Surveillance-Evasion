@@ -1,162 +1,157 @@
-#ifndef MINHEAP_H_INCLUDED
-#define MINHEAP_H_INCLUDED
+/**
+ * @file MinHeap.h
+ * @author Dongping Qi ()
+ * @brief 
+ *      A customized minimum heap data structure
+ * @date 2022-04
+ * 
+ * @copyright Copyright (c) 2022
+ * 
+ */
 
-#include <cmath>
-#include <cstdio>
-#include <cstdlib>
-#include <iostream>
-#include <memory.h>
-#include <limits.h>
-
-using namespace std;
-
-// Structure to represent a MinHeap node
 struct MinHeapNode
 {
     int node;
     double value;
 };
-//::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
-// Structure to represent a MinHeap
+
 struct MinHeap
 {
-    int hsize;      // Number of heap nodes present currently
-    int capacity;   // Capacity of MinHeap
-    int *pos;       // This is needed for decreaseKey()
-    MinHeapNode **array;
+    // number of heap nodes present currently
+    int hsize;                          
+    // capacity of MinHeap, large enough to hold all nodes
+    int capacity;                       
+    // a map between node and its index in array
+    int *pos;                           
+    // an array to hold all nodes
+    shared_ptr<MinHeapNode> *array;
 };
-//::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
-// A utility function to create a new MinHeap Node
-struct MinHeapNode* newMinHeapNode(int node, double value)
+
+// Construct a new MinHeapNode
+shared_ptr<MinHeapNode> newMinHeapNode(int node, double value)
 {
-    MinHeapNode* minHeapNode = new MinHeapNode;
-    minHeapNode->node = node;
-    minHeapNode->value = value;
+    auto minHeapNode = make_shared<MinHeapNode>();
+    minHeapNode -> node = node;
+    minHeapNode -> value = value;
     return minHeapNode;
 }
-//::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
-// A utility function to create a MinHeap
-struct MinHeap* createMinHeap(int capacity)
+
+// Construct a MinHeap
+MinHeap* createMinHeap(int capacity)
 {
-    MinHeap* minHeap = new MinHeap;
-    minHeap->pos = new int [capacity];
-    minHeap->hsize = 0;
-    minHeap->capacity = capacity;
-    minHeap->array = new MinHeapNode* [capacity];
+    MinHeap *minHeap = new MinHeap;
+    minHeap -> pos = new int[capacity];
+    minHeap -> hsize = 0;
+    minHeap -> capacity = capacity;
+    minHeap -> array = new shared_ptr<MinHeapNode>[capacity];
     return minHeap;
 }
-//::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
-// A utility function to swap two nodes of MinHeap. Needed for min heapify
-void swapMinHeapNode(struct MinHeapNode** a, struct MinHeapNode** b)
+
+// Swap two nodes of MinHeap. Needed for min heapify
+void swapMinHeapNode(shared_ptr<MinHeapNode> & node_a, shared_ptr<MinHeapNode> & node_b)
 {
-    struct MinHeapNode* t = *a;
-    *a = *b;
-    *b = t;
+    shared_ptr<MinHeapNode> temp = node_a;
+    node_a = node_b;
+    node_b = temp;
 }
-//::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
-// A standard function to heapify at given idx
-// This function also updates position of nodes when they are swapped.
-// Position is needed for decreaseKey()
-void minHeapify(struct MinHeap* minHeap, int idx)
+
+/*
+    Heapify at a given idx
+    - Need to updates pos of nodes when swapping
+*/
+void minHeapify(MinHeap *minHeap, int idx)
 {
     int smallest, left, right;
     smallest = idx;
-    left = 2*idx + 1;
-    right = 2*idx + 2;
+    left =  2 * idx + 1;
+    right = 2 * idx + 2;
 
-    if (left < minHeap->hsize &&
-        minHeap->array[left]->value < minHeap->array[smallest]->value )
-      smallest = left;
+    if (left < minHeap -> hsize &&
+        minHeap -> array[left] -> value < minHeap -> array[smallest] -> value)
+        smallest = left;
 
-    if (right < minHeap->hsize &&
-        minHeap->array[right]->value < minHeap->array[smallest]->value )
-      smallest = right;
+    if (right < minHeap -> hsize &&
+        minHeap -> array[right] -> value < minHeap -> array[smallest] -> value)
+        smallest = right;
 
     if (smallest != idx)
     {
         // The nodes to be swapped in MinHeap
-        MinHeapNode *smallestNode = minHeap->array[smallest];
-        MinHeapNode *idxNode = minHeap->array[idx];
+        auto smallestNode = minHeap -> array[smallest];
+        auto idxNode = minHeap -> array[idx];
 
-        // Swap positions
-        minHeap->pos[smallestNode->node] = idx;
-        minHeap->pos[idxNode->node] = smallest;
+        // Swap pos        
+        minHeap -> pos[smallestNode -> node] = idx;
+        minHeap -> pos[idxNode -> node] = smallest;
 
         // Swap nodes
-        swapMinHeapNode(&minHeap->array[smallest], &minHeap->array[idx]);
+        swapMinHeapNode(minHeap -> array[smallest], minHeap -> array[idx]);
 
         minHeapify(minHeap, smallest);
     }
 }
-//::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
-// A utility function to check if the given MinHeap is empty or not
-int isEmpty(struct MinHeap* minHeap)
+
+// Check if the given MinHeap is empty or not
+bool isEmpty(MinHeap *minHeap)
 {
-    return minHeap->hsize == 0;
+    return minHeap -> hsize == 0;
 }
-//::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
-// Standard function to extract minimum node from heap
-struct MinHeapNode* extractMin(struct MinHeap* minHeap)
+
+// Extract minimum node from MinHeap
+shared_ptr<MinHeapNode> extractMin(MinHeap *minHeap)
 {
     if (isEmpty(minHeap))
-        return NULL;
+        return nullptr;
 
     // Store the root node
-    struct MinHeapNode* root = minHeap->array[0];
+    shared_ptr<MinHeapNode> root = minHeap -> array[0];
 
-    // Replace root node with last node
-    struct MinHeapNode* lastNode = minHeap->array[minHeap->hsize - 1];
-    minHeap->array[0] = lastNode;
+    // Replace root node with the last node
+    shared_ptr<MinHeapNode> lastNode = minHeap -> array[minHeap -> hsize - 1];
+    minHeap -> array[0] = lastNode;
 
-    // Update position of last node
-    minHeap->pos[root->node] = minHeap->hsize-1;
-    minHeap->pos[lastNode->node] = 0;
+    // Update position of the last node
+    minHeap -> pos[root -> node] = minHeap -> hsize - 1;
+    minHeap -> pos[lastNode -> node] = 0;
 
     // Reduce heap size and heapify root
-    --minHeap->hsize;
+    minHeap -> hsize -= 1;
     minHeapify(minHeap, 0);
 
     return root;
 }
-//::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
-// Function to decrease value value of a given vertex v. This function
-// uses pos[] of MinHeap to get the current index of node in MinHeap
-void decreaseKey(struct MinHeap* minHeap, int v, double value)
+
+/* 
+    Decrease value of a given node
+    - Use pos[] to get the index of node in MinHeap array
+*/
+void decreaseKey(MinHeap *minHeap, int node, double value)
 {
-    // Get the index of v in  heap array
-    int i = minHeap->pos[v];
+    // Get the index of node in MinHeap array
+    int i = minHeap -> pos[node];
 
-    // Get the node and update its value value
-    minHeap->array[i]->value = value;
+    // Get the node and update its value
+    minHeap -> array[i] -> value = value;
 
-    // Travel up while the complete tree is not heapified.
-    // This is a O(Logn) loop
-    while (i && minHeap->array[i]->value < minHeap->array[(i - 1)/2]->value)
+    int p = (i - 1) / 2;
+    // Travel up while the tree is not completely heapified
+    while (i && minHeap -> array[i] -> value < minHeap -> array[p] -> value)
     {
         // Swap this node with its parent
-        minHeap->pos[minHeap->array[i]->node] = (i - 1)/2;
-        minHeap->pos[minHeap->array[(i - 1)/2]->node] = i;
-        swapMinHeapNode(&minHeap->array[i],  &minHeap->array[(i - 1)/2]);
+        minHeap->pos[minHeap -> array[i] -> node] = p;
+        minHeap->pos[minHeap -> array[p] -> node] = i;
+        swapMinHeapNode(minHeap->array[i], minHeap->array[p]);
 
-        // move to parent index
-        i = (i - 1)/2;
+        // Move to parent index
+        i = p;
+        p = (p - 1) / 2;
     }
 }
-//::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
-// A utility function to check if a given vertex is in MinHeap
-bool isInMinHeap(struct MinHeap *minHeap, int node)
-{
-    if (minHeap->pos[node] < minHeap->hsize)
-        return true;
-    return false;
-}
-//::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
-void deleteHeap(struct MinHeap *minHeap)
+
+// Destruct the MinHeap
+void deleteHeap(MinHeap *minHeap)
 {
     delete [] minHeap->pos;
     delete [] minHeap->array;
     delete minHeap;
 }
-//::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
-
-#endif // MINHEAP_H_INCLUDED

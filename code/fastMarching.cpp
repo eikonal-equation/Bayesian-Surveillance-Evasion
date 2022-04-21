@@ -1,14 +1,15 @@
 #include <vector>
 #include "mex.h"
-#include "include/Main.h"
+#include "include/fastMarching.h"
 using namespace std;
 
 void mexFunction(int nlhs, mxArray *plhs[], int nrhs, const mxArray *prhs[])
 {
-    // output pointers
-    double *U;
-    double *path_x;  double *path_y;
-
+    if (nlhs != 3) 
+        mexErrMsgTxt("Wrong number of output arguments.\n");
+    if (nrhs != 4)
+        mexErrMsgTxt("Wrong number of input arguments.\n");
+    // gather inputs
     int N;
     N = mxGetScalar(prhs[0]);
     double x0;
@@ -17,21 +18,25 @@ void mexFunction(int nlhs, mxArray *plhs[], int nrhs, const mxArray *prhs[])
     y0 = mxGetScalar(prhs[2]);
     double *K;
     K = mxGetPr(prhs[3]);
+    
+    // output pointers
+    double *u;
+    double *path_x;  
+    double *path_y;
 
-    if (nlhs != 3 || nrhs != 4) {
-        cout << "Error: The number of variables does not fit!" << endl;
-    }
-
-    // create output matrix
+    // allocate value function as a matrix
     plhs[0] = mxCreateDoubleMatrix(N, N, mxREAL);
 
     // get a pointer to the output data
-    U = mxGetPr(plhs[0]);
+    u = mxGetPr(plhs[0]);
 
-    // create vectors for path coordinates
-    vector<double> pathX;  vector<double> pathY;
-    fastMarching(N, x0, y0, K, U, pathX, pathY);
-
+    // length of optimal path is unknown when compiling
+    // use vector to hold optimal path first
+    vector<double> pathX;  
+    vector<double> pathY;
+    fastMarching(N, x0, y0, K, u, pathX, pathY);
+    
+    // allocate optimal path
     plhs[1] = mxCreateDoubleMatrix(1, pathX.size(), mxREAL);
     plhs[2] = mxCreateDoubleMatrix(1, pathY.size(), mxREAL);
 
