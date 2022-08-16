@@ -30,3 +30,9 @@
 *.exe
 *.out
 *.app
+
+code/Discrete_RL/.vscode
+code/Discrete_RL/build
+Code/Discrete_RL/plots/.ipynb_checkpoints
+Code/Discrete_RL/output
+.DS_Store
