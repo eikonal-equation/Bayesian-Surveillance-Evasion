@@ -2,10 +2,9 @@ mex fastMarching.cpp
 
 %% parameters
 episode = 1000;
-kn = 20;  gamma = 0.01;
+kn = 20;  gamma = 0.1;
 ucb_factor = sqrt(log(episode*kn^2/gamma));
 nobs = 4;
-K_min = 1e-4;
 
 
 %% variables
@@ -22,16 +21,16 @@ f = @(x,y) 1.0;  F = f(X,Y);
 [real_cost,x0,y0,B] = intensity_setup(nobs);
 
 % G_ob: coarse grid to store estimate
-kh = 1/kn;   
+kh = 1/kn;
 x_obs_1d = linspace(1/kn/2,1-1/kn/2,kn);  [xx,yy] = meshgrid(x_obs_1d);
 x_obs = [reshape(xx,[kn^2 1]) reshape(yy,[kn^2 1])];
 
-% statistics on G_ob  
-cgrid = K_min*kh*ones(kn,kn);  % cgrid/tgrid = K_min initially
-tgrid = kh*ones(kn,kn);        % tgrid is set to be a small value
-ngrid = ones(kn,kn);       
+% statistics on G_ob
+cgrid = B*kh*ones(kn,kn);    % cgrid/tgrid = B initially
+tgrid = kh*ones(kn,kn);      % tgrid is set to be a small value
+ngrid = ones(kn,kn);
 
-% path step size 
+% path step size
 tau = 0.1*h;
 
 % minimum integrated K along optimal path
@@ -39,12 +38,12 @@ opt_int_K = optimal_integrated_K(real_cost,x0,y0);
 
 
 %% estimates & stats collectors
-K_est = cgrid./tgrid;  
-K_var = K_est./tgrid;
+K_est = cgrid./tgrid;
+K_var = 1./cgrid;
 
-ucb_K = zeros(n,n);  
+ucb_K = zeros(n,n);
 % use zero ucb-factor initially
-ucb_K = ucb_update_pwc_K(n,h,kn,kh,K_var,K_est,ucb_K,0.0,K_min);
+ucb_K = ucb_update_pwc_K(n,h,kn,kh,K_var,K_est,ucb_K,0.0);
 
 % workspaces
 ctime = zeros(episode,1);  cn = 0;  % capture counts at run time
@@ -56,11 +55,11 @@ xcaught = zeros(episode,1);  ycaught = zeros(episode,1);
 for m = 1:episode
     % planning based on ucb modified K
     [~,path_x,path_y] = fastMarching(n,x0,y0,ucb_K);
-  
+
     % integrate K along currently used path
     int_K(m) = integrated_K(path_x,path_y,real_cost,tau);
-    
-    % simulate the capture event 
+
+    % simulate the capture event
     [xfin,yfin,caught,cgrid,tgrid,ngrid] = simluate_capture(path_x,path_y,real_cost,kn,kh,cgrid,tgrid,ngrid,tau);
     if caught
         xcaught(m) = xfin;    ycaught(m) = yfin;
@@ -69,17 +68,17 @@ for m = 1:episode
         xcaught(m) = NaN;    ycaught(m) = NaN;
     end
     ctime(m) = cn;
-    
+
     % update the estimated K & variance
     K_est = cgrid./tgrid;
-    K_var = 1./ngrid;
-    
-    ucb_K = ucb_update_pwc_K(n,h,kn,kh,K_var,K_est,ucb_K,ucb_factor,K_min);
+    K_var = 1./cgrid;
+
+    ucb_K = ucb_update_pwc_K(n,h,kn,kh,K_var,K_est,ucb_K,ucb_factor);
 end
 
 
 %% learning results
-K_zero_ucb = ucb_update_pwc_K(n,h,kn,kh,K_var,K_est,ucb_K,0.0,K_min);
+K_zero_ucb = ucb_update_pwc_K(n,h,kn,kh,K_var,K_est,ucb_K,0.0);
 [u_zero_ucb,path_x_zero_ucb,path_y_zero_ucb] = fastMarching(n,x0,y0,K_zero_ucb);
 [u_ucb,path_x_ucb,path_y_ucb] = fastMarching(n,x0,y0,ucb_K);
 [u_free,path_x_free,path_y_free] = fastMarching(n,x0,y0,real_cost(X,Y));
@@ -156,7 +155,7 @@ line(path_x_ucb,path_y_ucb,'Linewidth',3,'Color','g','Linestyle', '-')
 line(path_x_free,path_y_free,'Linewidth',3,'Color','r','Linestyle', '-')
 hold off
 set(gca,'xtick',0.0:0.2:1)
-set(gca,'ytick',0.0:0.2:1) 
+set(gca,'ytick',0.0:0.2:1)
 axis image
 title(['$\tilde{\sigma}$, $\gamma=$' num2str(ucb_factor)],'fontsize',15,'interpreter','latex')
 
@@ -167,7 +166,7 @@ actual_risk = 1 - exp(-int_K);
 averag_risk = zeros(episode,1);
 for i = 1:length(int_K)
      averag_risk(i) = sum(actual_risk(1:i))/i - expect_risk;
-end   
+end
 hold on
 plot(1:episode,averag_risk,'LineWidth',3)
 hold off

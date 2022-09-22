@@ -2,7 +2,7 @@ mex fastMarching.cpp
 
 %% parameters
 episode = 50;
-kn = 20;  gamma = 0.01;
+kn = 20;  gamma = 0.1;
 ucb_factor = sqrt(log(episode*kn^2/gamma));
 nobs = 4;
 tune_param = true;
