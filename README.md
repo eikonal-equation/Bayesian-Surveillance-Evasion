@@ -56,6 +56,9 @@ You can change the following parameters:
 * `gamma`:          the confidence level;
 * `nobs`:           the number of observers, corresponding to different examples;
 
+For ` learning_K_gp.m `, there are 2 more parameters:
+* `tune_param`:     boolean of whether hyperparameter-tuning is applied;
+* `kernel_type`:    specify the kernel type: `gauss`, `matern1`, `matern3`, `matern5`; 
 
 ## Visualizing output
 
