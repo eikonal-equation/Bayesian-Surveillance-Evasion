@@ -56,7 +56,7 @@
         <p>
           We conduct a grid refinement study for the algorithm using piecewise constant model on the second example in paper.
           $\mathcal{G}$'s are chosen as $N\times N$ uniform square decompositions, with $N = 10, 20, 40$.
-          We use $Q_*$ instead of the learnable optimality $\bar{Q}_*$ (see <a href="limits.html">here</a>) to compute the regret metrics of performance.
+          We use $W_*$ instead of the learnable optimality $\tilde{W}_*$ (see <a href="limits.html">here</a>) to compute the regret metrics of performance.
         </p>
       </div>
       <div class="col-md-12">
@@ -71,7 +71,7 @@
           The right figure consolidates this through another regret metric, the experimentally observed capture probability.
         </p>
         <p>
-          In the left figure for $N = 20$ and $N = 40$, we observe that the (non-averaged) differences between $Q_i$ and $Q_*$ are pushed down
+          In the left figure for $N = 20$ and $N = 40$, we observe that the (non-averaged) differences between $W_i$ and $W_*$ are pushed down
           to a much lower level, compared with $N = 10$.
           This indicates that with $N = 20$ and $N = 40$ Alg-PC is able to explore paths which are closer to become optimal.
         </p>
