@@ -1,12 +1,14 @@
 mex fastMarching.cpp
 
 %% parameters
-episode = 50;
-kn = 20;  gamma = 0.1;
+episode = 15000;
+kn = 20;  
+gamma = 17;
 ucb_factor = sqrt(log(episode*kn^2/gamma));
 nobs = 4;
 tune_param = true;
-
+% kernel_type = 'matern3';
+kernel_type = 'gauss';
 
 %% variables
 n = 101;  h = 1/(n-1);
@@ -43,13 +45,15 @@ opt_int_K = optimal_integrated_K(real_cost,x0,y0);
 mean = @(x) log(B)*ones(size(x,1),1);
 scale = 0.02;  shape = 1.0;
 dist = @(x,y) (x(:,1)-y(:,1)').^2 + (x(:,2)-y(:,2)').^2;
-kernel = @(x,y) shape*exp(-dist(x,y)/scale);
+kernel = kernel_setup(kernel_type,shape,scale);
 
 % initialize Ktilde
 K_est = zeros(kn,kn);
 
 % prediction kernel matrix (fixed since G_pd is fixed)
+K_ob_cov = kernel(x_obs,x_obs);
 K_prd = diag(kernel(x_prd,x_prd))';
+K_pd_cov = kernel(x_prd,x_obs);
 
 % workspaces
 mean_prd = reshape(mean(x_prd),[n n]);
@@ -60,6 +64,7 @@ xcaught = zeros(episode,1);  ycaught = zeros(episode,1);
 
 
 %% main learning loop, an optimal path is found by FMM in each episode
+% profile on
 for m = 1:episode
     % use ucb factor to modify gp predicted K
     ucb_K = exp(mean_prd - ucb_factor*stds_prd);
@@ -92,22 +97,26 @@ for m = 1:episode
         stds_prd = zeros(n,n);
     else
         x_acc = x_obs(idgrid,:);   
-        y_acc = log(K_est(idgrid));
+        y_acc = log(K_est(idgrid)); 
         std_acc = K_std(idgrid);
-        K_obs = kernel(x_acc,x_acc) + diag(std_acc);
-        K_o_p = kernel(x_prd,x_acc);
+        K_obs = K_ob_cov(idgrid,idgrid) + diag(std_acc);
+        K_o_p = K_pd_cov(:,idgrid);
         [mean_prd,stds_prd] = gp_prediction(n,mean,x_acc,y_acc,x_prd,K_obs,K_o_p,K_prd);
     end
     
     % tune the hyperparameters every 1000 episode
     if tune_param  &&  m > 1000  &&  mod(m,1000) == 1  &&  length(idgrid) > 10
+        text = ['tunning parameters at episode = ' num2str(m)];
+        disp(text)
         lb = [1e-10,1e-10];
-        lml = @(p) log_marginal_likelihood(y_acc,mean(x_acc),dist(x_acc,x_acc),std_acc,p(1),p(2));
+        lml = @(p) log_marginal_likelihood(y_acc,mean(x_acc),dist(x_acc,x_acc),std_acc,p(1),p(2),kernel_type);
         options = optimoptions('fmincon','SpecifyObjectiveGradient',true);
         [pm,~] = fmincon(lml,[shape,scale],[],[],[],[],lb,[],[],options);
         shape = pm(1);  scale = pm(2);
-        kernel = @(x,y) shape*exp(-dist(x,y)/scale);
+        kernel = kernel_setup(kernel_type,shape,scale);
+        K_ob_cov = kernel(x_obs,x_obs);
         K_prd = diag(kernel(x_prd,x_prd))';
+        K_pd_cov = kernel(x_prd,x_obs);
     end
 end
 
@@ -124,12 +133,10 @@ figure
 set(gcf, 'Position', get(0, 'Screensize'));
 subplot(2,4,1)
 hold on
-% imagesc(x_prd_1d,x_prd_1d,real_cost(X,Y))
-imagesc(x_prd_1d,x_prd_1d,u_free)
+imagesc(x_prd_1d,x_prd_1d,real_cost(X,Y))
 line(path_x_free,path_y_free,'Linewidth',3,'Color','r','Linestyle', '-')
 scatter(x0,y0,50,'c','o','filled')
 colorbar
-cllim = caxis;
 hold off
 axis image
 title('true $K$','fontsize',15,'interpreter','latex')
@@ -137,7 +144,6 @@ title('true $K$','fontsize',15,'interpreter','latex')
 subplot(2,4,2)
 hold on
 imagesc(x_prd_1d,x_prd_1d,mean_prd_zero_ucb);
-caxis(cllim)
 colorbar
 scatter(xcaught,ycaught,2.5,'y','o','filled')
 scatter(x0,y0,50,'c','o','filled')
@@ -154,7 +160,7 @@ title(['$\exp(M)$, $l$=' num2str(scale) ', $a$=' num2str(shape)],'fontsize',15,'
 subplot(2,4,3)
 [~,hc] = contour(x_prd_1d,x_prd_1d,u_free,25);
 colorbar
-cllim_u = caxis;
+cllim_u = clim;
 set(hc,'LineWidth',2);
 hold on
 line(path_x_free,path_y_free,'Linewidth',3,'Color','r','Linestyle', '-')
@@ -167,7 +173,7 @@ title('true $u$; optimal path','fontsize',15,'interpreter','latex')
 subplot(2,4,4)
 [~,hc] = contour(x_prd_1d,x_prd_1d,u_zero_ucb,20);
 colorbar
-% caxis(cllim_u)
+% clim(cllim_u)
 set(hc,'LineWidth',2);
 hold on
 scatter(x0,y0,50,'c','o','filled')
@@ -206,6 +212,7 @@ end
 hold on
 plot(1:episode,averag_risk,'LineWidth',3)
 hold off
+ylim([0.0 inf])
 xlabel('episode')
 title('averaged excess risk','fontsize',15,'interpreter','latex')
 

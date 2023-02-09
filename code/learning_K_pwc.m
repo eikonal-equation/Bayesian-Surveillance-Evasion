@@ -1,10 +1,12 @@
 mex fastMarching.cpp
 
 %% parameters
-episode = 1000;
-kn = 20;  gamma = 0.1;
+episode = 15000;
+kn = 20;  
+gamma = 0.01;
 ucb_factor = sqrt(log(episode*kn^2/gamma));
-nobs = 4;
+nobs = 20;
+K_min = 1e-4;
 
 
 %% variables
@@ -26,9 +28,9 @@ x_obs_1d = linspace(1/kn/2,1-1/kn/2,kn);  [xx,yy] = meshgrid(x_obs_1d);
 x_obs = [reshape(xx,[kn^2 1]) reshape(yy,[kn^2 1])];
 
 % statistics on G_ob
-cgrid = B*kh*ones(kn,kn);    % cgrid/tgrid = B initially
-tgrid = kh*ones(kn,kn);      % tgrid is set to be a small value
-ngrid = ones(kn,kn);
+cgrid = B*kh*ones(kn,kn);  % cgrid/tgrid = B initially
+tgrid = kh*ones(kn,kn);        % tgrid is set to be a small value
+ngrid = ones(kn,kn);       
 
 % path step size
 tau = 0.1*h;
@@ -68,12 +70,18 @@ for m = 1:episode
         xcaught(m) = NaN;    ycaught(m) = NaN;
     end
     ctime(m) = cn;
-
-    % update the estimated K & variance
-    K_est = cgrid./tgrid;
+    
+    % update the estimated K & variance   
+    K_est = log(cgrid./tgrid);
     K_var = 1./cgrid;
-
-    ucb_K = ucb_update_pwc_K(n,h,kn,kh,K_var,K_est,ucb_K,ucb_factor);
+    
+    if mod(m,1000) == 0
+        text = ['episode' num2str(m)];
+        disp(text)
+    end
+    
+%     ucb_K = ucb_update_pwc_K(n,h,kn,kh,K_var,K_est,ucb_K,ucb_factor,K_min);
+    ucb_K = exp(ucb_K);
 end
 
 
@@ -86,13 +94,14 @@ K_zero_ucb = ucb_update_pwc_K(n,h,kn,kh,K_var,K_est,ucb_K,0.0);
 
 %% plottings
 figure
+set(gcf,'Position',[1000 100 650 800])
 subplot(2,4,1)
 hold on
 imagesc(x_prd_1d,x_prd_1d,real_cost(X,Y))
 line(path_x_free,path_y_free,'Linewidth',3,'Color','r','Linestyle', '-')
 scatter(x0,y0,50,'c','o','filled')
 colorbar
-cllim = caxis;
+cllim_u = clim;
 hold off
 axis image
 title('true $K$','fontsize',15,'interpreter','latex')
@@ -101,7 +110,7 @@ title('true $K$','fontsize',15,'interpreter','latex')
 subplot(2,4,2)
 hold on
 imagesc(x_prd_1d,x_prd_1d,K_zero_ucb);
-caxis(cllim)
+clim(cllim_u)
 colorbar
 scatter(xcaught,ycaught,2.5,'y','o','filled')
 scatter(x0,y0,50,'c','o','filled')
@@ -118,7 +127,6 @@ title('$\tilde{K}$','fontsize',15,'interpreter','latex')
 subplot(2,4,3)
 [~,hc] = contour(x_prd_1d,x_prd_1d,u_free,25);
 colorbar
-cllim_u = caxis;
 set(hc,'LineWidth',2);
 hold on
 line(path_x_free,path_y_free,'Linewidth',3,'Color','r','Linestyle', '-')
@@ -170,6 +178,7 @@ end
 hold on
 plot(1:episode,averag_risk,'LineWidth',3)
 hold off
+ylim([0 inf])
 xlabel('episode')
 title('averaged excess risk','fontsize',15,'interpreter','latex')
 
