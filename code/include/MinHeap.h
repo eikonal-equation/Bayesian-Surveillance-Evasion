@@ -9,14 +9,12 @@
  * 
  */
 
-struct MinHeapNode
-{
+struct MinHeapNode {
     int node;
     double value;
 };
 
-struct MinHeap
-{
+struct MinHeap {
     // number of heap nodes present currently
     int hsize;                          
     // capacity of MinHeap, large enough to hold all nodes
@@ -28,8 +26,7 @@ struct MinHeap
 };
 
 // Construct a new MinHeapNode
-shared_ptr<MinHeapNode> newMinHeapNode(int node, double value)
-{
+shared_ptr<MinHeapNode> newMinHeapNode(int node, double value) {
     auto minHeapNode = make_shared<MinHeapNode>();
     minHeapNode -> node = node;
     minHeapNode -> value = value;
@@ -37,8 +34,7 @@ shared_ptr<MinHeapNode> newMinHeapNode(int node, double value)
 }
 
 // Construct a MinHeap
-MinHeap* createMinHeap(int capacity)
-{
+MinHeap* createMinHeap(int capacity) {
     MinHeap *minHeap = new MinHeap;
     minHeap -> pos = new int[capacity];
     minHeap -> hsize = 0;
@@ -48,8 +44,7 @@ MinHeap* createMinHeap(int capacity)
 }
 
 // Swap two nodes of MinHeap. Needed for min heapify
-void swapMinHeapNode(shared_ptr<MinHeapNode> & node_a, shared_ptr<MinHeapNode> & node_b)
-{
+void swapMinHeapNode(shared_ptr<MinHeapNode> & node_a, shared_ptr<MinHeapNode> & node_b) {
     shared_ptr<MinHeapNode> temp = node_a;
     node_a = node_b;
     node_b = temp;
@@ -59,8 +54,7 @@ void swapMinHeapNode(shared_ptr<MinHeapNode> & node_a, shared_ptr<MinHeapNode> &
     Heapify at a given idx
     - Need to updates pos of nodes when swapping
 */
-void minHeapify(MinHeap *minHeap, int idx)
-{
+void minHeapify(MinHeap *minHeap, int idx) {
     int smallest, left, right;
     smallest = idx;
     left =  2 * idx + 1;
@@ -92,14 +86,12 @@ void minHeapify(MinHeap *minHeap, int idx)
 }
 
 // Check if the given MinHeap is empty or not
-bool isEmpty(MinHeap *minHeap)
-{
+bool isEmpty(MinHeap *minHeap) {
     return minHeap -> hsize == 0;
 }
 
 // Extract minimum node from MinHeap
-shared_ptr<MinHeapNode> extractMin(MinHeap *minHeap)
-{
+shared_ptr<MinHeapNode> extractMin(MinHeap *minHeap) {
     if (isEmpty(minHeap))
         return nullptr;
 
@@ -125,8 +117,7 @@ shared_ptr<MinHeapNode> extractMin(MinHeap *minHeap)
     Decrease value of a given node
     - Use pos[] to get the index of node in MinHeap array
 */
-void decreaseKey(MinHeap *minHeap, int node, double value)
-{
+void decreaseKey(MinHeap *minHeap, int node, double value) {
     // Get the index of node in MinHeap array
     int i = minHeap -> pos[node];
 
@@ -135,8 +126,7 @@ void decreaseKey(MinHeap *minHeap, int node, double value)
 
     int p = (i - 1) / 2;
     // Travel up while the tree is not completely heapified
-    while (i && minHeap -> array[i] -> value < minHeap -> array[p] -> value)
-    {
+    while (i && minHeap -> array[i] -> value < minHeap -> array[p] -> value) {
         // Swap this node with its parent
         minHeap->pos[minHeap -> array[i] -> node] = p;
         minHeap->pos[minHeap -> array[p] -> node] = i;
@@ -149,8 +139,7 @@ void decreaseKey(MinHeap *minHeap, int node, double value)
 }
 
 // Destruct the MinHeap
-void deleteHeap(MinHeap *minHeap)
-{
+void deleteHeap(MinHeap *minHeap) {
     delete [] minHeap->pos;
     delete [] minHeap->array;
     delete minHeap;

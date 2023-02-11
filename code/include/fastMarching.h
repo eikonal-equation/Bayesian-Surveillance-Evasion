@@ -3,9 +3,10 @@
  * @author Dongping Qi ()
  * @brief 
  *      A succinct Fast Marching Method implementation
- *      - MinHeap is implemented as a struct, not a class
+ *      - MinHeap contains MinHeapNode as shared_ptr
  *      - Support only zero boundary condition now
- *      - Designed to be compiled by Matlab "mex" function 
+ *      - Designed to be able to conduct fast data transfer
+ *        between Matlab through a "mex" function 
  * @date 2022-04
  * 
  * @copyright Copyright (c) 2022
@@ -27,15 +28,13 @@ using namespace std;
 #include "optimalPath.h"
 
 
-
-double f(double x, double y){
+double f(double x, double y) {
     double z;
     z = 1 + 0.0 * sin(4 * pi * x) * sin(4 * pi * y);
     return z;
 }
 
-void generateSpeed(int N, double h, double *F)
-{
+void generateSpeed(int N, double h, double *F) {
     for (int i = 0; i < N; i++) {
         for (int j = 0; j < N; j++) {
             double x = (double)j * h;
@@ -45,8 +44,7 @@ void generateSpeed(int N, double h, double *F)
     }
 }
 
-void fastMarching(int N, double x0, double y0, double *K, double *U, vector<double> &pathX, vector<double> &pathY)
-{
+void fastMarching(int N, double x0, double y0, double *K, double *U, vector<double> &pathX, vector<double> &pathY) {
     double h = 1 / ((double)N - 1);
 
     // Generate the speed value on each node
@@ -67,8 +65,7 @@ void fastMarching(int N, double x0, double y0, double *K, double *U, vector<doub
         Main loop starts 
     */
     int minnode;
-    while (!isEmpty(minHeap)) 
-    {
+    while (!isEmpty(minHeap)) {
         // Step one: Extract the root node of minHeap and set its status as ACCEPT
         shared_ptr<MinHeapNode> minNode = extractMin(minHeap);
         minnode = minNode -> node;

@@ -9,8 +9,7 @@
  * 
  */
 
-void optimalNode(int N, double h, vector<double> &current, double *u, double tau)
-{
+void optimalNode(int N, double h, vector<double> &current, double *u, double tau) {
     // number of directions
     int W = 100;
 
@@ -60,8 +59,7 @@ void optimalNode(int N, double h, vector<double> &current, double *u, double tau
     current[1] = ymin;
 }
 
-void optimalPath(int N, double h, double *u, double x0, double y0, vector<double> &pathX, vector<double> &pathY)
-{
+void optimalPath(int N, double h, double *u, double x0, double y0, vector<double> &pathX, vector<double> &pathY) {
     pathX.push_back(x0);  
     pathY.push_back(y0);
     vector<double> current{x0, y0};

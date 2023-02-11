@@ -9,7 +9,7 @@
  * 
  */
 
-void zeroBoundary(int N, double *u, int *status, MinHeap *minHeap){
+void zeroBoundary(int N, double *u, int *status, MinHeap *minHeap) {
     // Set the initial value function as infinity
     for (int i = 0; i < N * N; i++) {
         u[i] = DBL_MAX;

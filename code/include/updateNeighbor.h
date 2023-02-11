@@ -10,8 +10,7 @@
  * 
  */
 
-double upwindScheme(double h, double u_node, double uh, double uv, double F_node)
-{
+double upwindScheme(double h, double u_node, double uh, double uv, double F_node) {
     double q = h / F_node;
     double vnew = u_node;
 
@@ -25,7 +24,7 @@ double upwindScheme(double h, double u_node, double uh, double uv, double F_node
     return vnew;
 }
 
-void updateNeighbor(int node, int N, double h, double *u, int *status, MinHeap *minHeap, double F_node){
+void updateNeighbor(int node, int N, double h, double *u, int *status, MinHeap *minHeap, double F_node) {
     if (status[node] != 2) {
         double uh = min(u[node - 1], u[node + 1]);
         double uv = min(u[node - N], u[node + N]);
