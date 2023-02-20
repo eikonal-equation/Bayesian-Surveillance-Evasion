@@ -59,12 +59,15 @@
 
       <h2>Abstract </h2>
         <div class="container bg-light">
-        <p> Most classical optimal control problems assume the environment to be either fully known or statistically known with a probability distribution.
-            We consider a simple 2D continuous path planning problem with a completely unknown intensity of random termination.
-            An Evader is trying to escape a domain while minimizing the cumulative detection risk to some static enemy Observers.
-            Those Observers' surveillance intensity is not revealed to the Evader initially and has to be learned as the Evader conducts a repetitive planning task.
-            We propose a new strategic planning algorithm which utilizes Gaussian process regression to model the unknown function and aims to deal with the exploration-exploitation dilemma.
-            We illustrate our method on several examples with different numbers and locations of Observers.
+        <p> We consider a task of surveillance-evading path-planning in a continuous setting.
+          An Evader strives to escape from a 2D domain while minimizing the risk of detection (and immediate capture).
+          The probability of detection is path-dependent and determined by the spatially inhomogeneous surveillance intensity, which is fixed but a priori unknown and gradually 
+          learned in the multi-episodic setting.  
+          We introduce a Bayesian reinforcement learning algorithm 
+          that relies on a Gaussian Process regression (to model the surveillance intensity function based on the information from prior episodes),
+          numerical methods for Hamilton-Jacobi PDEs (to plan the best continuous trajectories based on the current model), and 
+          Confidence Bounds (to balance the exploration vs exploitation).
+          We use numerical experiments and regret metrics to highlight the significant advantages of our approach compared to traditional graph-based algorithms of reinforcement learning. 
         </p>
       </div>
       </p>
