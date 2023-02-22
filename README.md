@@ -79,6 +79,7 @@ To run the experiements , go to `DiscreteRL/`, create a folder `build` and type 
 under this folder. Then type 
 
 > make
+
 > ./main
 
 to compile & run. To visualize the results, go to `plots` and open jupyter notebook. The python notebook
