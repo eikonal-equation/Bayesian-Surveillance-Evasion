@@ -70,3 +70,15 @@ Each algorithm contains 8 output sub-figures, which are
 * Estimated/Posterior variance;
 * Instant regret in each episode;
 * Averaged regret & observed capture rate;
+
+The discrete algorithms (UCT & Alg-D) are also implemented in C++ and compiled using `cmake`.
+To run the experiements , go to `DiscreteRL/`, create a folder `build` and type in terminal
+
+> cmake .
+
+under this folder. Then type 
+
+> make
+
+to compile & run. To visualize the results, go to `plots` and open jupyter notebook. The python notebook
+`graph_algorithm.ipynb` contains the code for visualization.
